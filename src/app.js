@@ -11,24 +11,31 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-frontend-domain.com'] 
+        ? ['http://localhost:3000']
         : ['http://localhost:3000'],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Test route to verify API is working
-app.get('/api/test', (req, res) => {
+// Test route
+app.get('/test', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
-// Routes with /api prefix
+// Mount routes with /api prefix
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/rooms', require('./routes/rooms'));
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Error:', err);
     res.status(500).json({ message: 'Something went wrong!' });
+});
+
+// Handle 404
+app.use((req, res) => {
+    res.status(404).json({ message: `Route ${req.url} not found` });
 });
 
 module.exports = { app, server }; 
