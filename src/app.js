@@ -16,15 +16,14 @@ app.use(cors({
     credentials: true
 }));
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
+// Test route to verify API is working
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working' });
+});
 
-// Only include rooms routes if the file exists
-try {
-    app.use('/api/rooms', require('./routes/rooms'));
-} catch (error) {
-    console.log('Rooms routes not implemented yet');
-}
+// Routes with /api prefix
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/rooms', require('./routes/rooms'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
